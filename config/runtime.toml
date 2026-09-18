@@ -1,0 +1,656 @@
+bluetooth_name = "Glove80"
+default_layer = 0
+
+[[layer]]
+id = "base"
+name = "Base"
+keys = """
+
+TD(0) TD(1) TD(2) TD(3) TD(4) -- KC_LSFT KC_RSFT -- KC_F6 KC_F7 KC_F8 KC_F9 TD(5)
+KC_EQL TD(6) KC_2 KC_3 KC_4 KC_5 KC_LALT KC_RCTL KC_6 TD(7) KC_8 KC_9 KC_0 KC_MINS
+KC_TAB KC_Q KC_W KC_E KC_R KC_T MO(1) KC_DEL KC_Y KC_U KC_I KC_O KC_P KC_BSLS
+KC_ESC KC_A KC_S KC_D KC_F KC_G KC_SPC KC_ENT KC_H KC_J KC_K KC_L KC_SCLN KC_QUOT
+KC_GRV KC_Z KC_X KC_C KC_V KC_B KC_LCTL KC_BSPC KC_N KC_M KC_COMM KC_DOT KC_SLSH KC_PGUP
+MO(2) KC_HOME KC_END KC_LEFT KC_RGHT -- KC_LGUI KC_RALT -- KC_UP KC_DOWN KC_LBRC KC_RBRC KC_PGDN
+"""
+
+[[layer]]
+id = "lower"
+name = "Lower"
+keys = """
+
+-- -- KC_BRID KC_BRIU -- -- KC_TRNS KC_TRNS -- KC_MUTE KC_VOLD KC_VOLU -- KC_PAUS
+KC_TRNS -- KC_MPRV KC_MPLY KC_MNXT KC_HOME KC_TRNS KC_TRNS LSFT(KC_9) KC_NUM KC_PEQL KC_PSLS KC_PAST KC_PSCR
+KC_TRNS -- -- KC_UP -- KC_END TO(0) KC_TRNS LSFT(KC_0) KC_P7 KC_P8 KC_P9 KC_PMNS KC_SCRL
+KC_TRNS -- KC_LEFT KC_DOWN KC_RGHT KC_PGUP KC_TRNS KC_TRNS LSFT(KC_5) KC_P4 KC_P5 KC_P6 KC_PPLS --
+KC_TRNS KC_APP -- KC_F11 KC_F12 KC_PGDN KC_TRNS KC_TRNS KC_COMM KC_P1 KC_P2 KC_P3 KC_PENT KC_TRNS
+MO(2) KC_CAPS KC_INS KC_F11 KC_F12 -- KC_TRNS KC_TRNS -- KC_P0 KC_P0 KC_PDOT KC_PENT KC_TRNS
+"""
+
+[[layer]]
+id = "magic"
+name = "Magic"
+keys = """
+
+USER(10) -- -- -- -- -- USER(2) -- -- -- -- -- -- USER(11)
+-- -- -- -- -- -- USER(3) -- -- -- -- -- -- --
+-- UG_SPDU UG_OMODE UG_HUEU BL_UP BL_TOGG -- -- -- -- -- -- -- --
+QK_BOOT UG_SPDD UG_TOGG UG_HUED BL_DOWN UG_NEXT USER(0) -- -- -- -- -- -- USER(12)
+QK_RBT -- -- -- -- -- USER(1) -- -- -- -- -- -- QK_RBT
+-- -- -- -- -- -- QK_OUTPUT_USB -- -- -- -- -- -- --
+"""
+
+[[layer]]
+id = "gaming"
+name = "Gaming"
+keys = """
+
+KC_ESC KC_P KC_O KC_N KC_BSPC -- KC_LSFT KC_ENT -- KC_F1 KC_F2 KC_F3 KC_F4 KC_F5
+KC_M KC_6 KC_7 KC_8 KC_9 KC_0 KC_LALT KC_UP KC_F6 KC_F7 KC_F8 KC_F9 KC_F10 KC_F11
+KC_I KC_1 KC_2 KC_3 KC_4 KC_5 KC_V KC_ESC KC_Y KC_U KC_I KC_O KC_P KC_F12
+KC_T KC_TAB KC_Q KC_W KC_E KC_R KC_SPC KC_RGHT KC_H KC_J KC_K KC_L KC_SCLN KC_QUOT
+KC_G KC_LSFT KC_A KC_S KC_D KC_F KC_LCTL KC_DOWN KC_N KC_M KC_COMM KC_DOT KC_SLSH KC_BSLS
+KC_B KC_LCTL KC_Z KC_X KC_C -- KC_ENT KC_LEFT -- KC_MINS KC_LBRC KC_RBRC KC_EQL KC_GRV
+"""
+
+[[layer]]
+id = "layer4"
+name = "Mac Hyper"
+keys = """
+
+KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS -- KC_TRNS KC_TRNS -- KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS
+KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS TG(4) KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS
+KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS
+KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS
+KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS
+KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS -- KC_TRNS MOD(MOD_LCTL|MOD_LALT|MOD_LGUI) -- KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS
+"""
+
+[[morse]]
+name = "Base key 0 tap-hold"
+tap = "KC_F1"
+hold = "LGUI(KC_F1)"
+hold_timeout_ms = 200
+gap_timeout_ms = 200
+quick_tap_ms = 0
+mode = "normal"
+
+[[morse]]
+name = "Base key 1 tap-hold"
+tap = "KC_F2"
+hold = "LGUI(KC_F2)"
+hold_timeout_ms = 200
+gap_timeout_ms = 200
+quick_tap_ms = 0
+mode = "normal"
+
+[[morse]]
+name = "Base key 2 tap-hold"
+tap = "KC_F3"
+hold = "LGUI(KC_F3)"
+hold_timeout_ms = 200
+gap_timeout_ms = 200
+quick_tap_ms = 0
+mode = "normal"
+
+[[morse]]
+name = "Base key 3 tap-hold"
+tap = "KC_F4"
+hold = "LGUI(KC_F4)"
+hold_timeout_ms = 200
+gap_timeout_ms = 200
+quick_tap_ms = 0
+mode = "normal"
+
+[[morse]]
+name = "Base key 4 tap-hold"
+tap = "KC_F5"
+hold = "LGUI(KC_F5)"
+hold_timeout_ms = 200
+gap_timeout_ms = 200
+quick_tap_ms = 0
+mode = "normal"
+
+[[morse]]
+name = "Base key 9 tap-hold"
+tap = "KC_PSCR"
+hold = "LGUI(KC_PSCR)"
+hold_timeout_ms = 200
+gap_timeout_ms = 200
+quick_tap_ms = 0
+mode = "normal"
+
+[[morse]]
+name = "Base key 11 tap-hold"
+tap = "KC_1"
+hold = "LSFT(KC_1)"
+hold_timeout_ms = 200
+gap_timeout_ms = 200
+quick_tap_ms = 0
+mode = "normal"
+
+[[morse]]
+name = "Base key 17 tap-hold"
+tap = "KC_7"
+hold = "LSFT(KC_SLSH)"
+hold_timeout_ms = 200
+gap_timeout_ms = 200
+quick_tap_ms = 0
+mode = "normal"
+
+[[combo]]
+name = "Gaming toggle from Base"
+positions = [
+    [
+    4,
+    5,
+],
+    [
+    5,
+    4,
+],
+]
+output = "TG(3)"
+layer = 0
+
+[[combo]]
+name = "Gaming toggle from Gaming"
+positions = [
+    [
+    4,
+    5,
+],
+    [
+    5,
+    4,
+],
+]
+output = "TG(3)"
+layer = 3
+
+[behavior]
+combo_timeout_ms = 50
+oneshot_timeout_ms = 1000
+tap_interval_ms = 20
+tap_capslock_interval_ms = 20
+oneshot_activate_on_keypress = false
+oneshot_quick_release = false
+
+[behavior.morse]
+enable_flow_tap = false
+prior_idle_ms = 120
+
+[behavior.morse.default_profile]
+hold_timeout_ms = 250
+gap_timeout_ms = 250
+unilateral_tap = false
+opposite_hand_hold = false
+mode = "normal"
+
+[pointing]
+
+[lighting]
+brightness = 207
+output_mode = "always-on"
+wake_layers = [2]
+scene_policy = "effective-only"
+
+[lighting.background]
+enabled = false
+hue = 0
+saturation = 0
+value = 0
+speed = 128
+mode = "solid"
+
+[lighting.effects]
+effect = "Gradient"
+palette = "Polarized"
+value = 255
+speed = 96
+
+[lighting.effects.params.Crosshair]
+"Arm hue" = 0
+"Arm width" = 11
+Crosses = 1
+"Duration x10ms" = 90
+"Key hue" = 173
+"Pulse width" = 170
+
+[[lighting.scene]]
+layer = 1
+led = 11
+color = "#00ff08"
+effect = "solid"
+
+[[lighting.scene]]
+layer = 1
+led = 16
+color = "#f4ff00"
+effect = "solid"
+
+[[lighting.scene]]
+layer = 1
+led = 17
+color = "#00ff08"
+effect = "solid"
+
+[[lighting.scene]]
+layer = 1
+led = 22
+color = "#a7af00"
+effect = "solid"
+
+[[lighting.scene]]
+layer = 1
+led = 23
+color = "#00ff08"
+effect = "solid"
+
+[[lighting.scene]]
+layer = 1
+led = 50
+color = "#00207f"
+effect = "solid"
+
+[[lighting.scene]]
+layer = 1
+led = 56
+color = "#002caf"
+effect = "solid"
+
+[[lighting.scene]]
+layer = 1
+led = 62
+color = "#0040ff"
+effect = "solid"
+
+[[lighting.conditional_scene]]
+led = 7
+color = "#00ff30"
+effect = "solid"
+output_mode = "always-on"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 7
+color = "#ff2000"
+effect = "solid"
+output_mode = "always-off"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 7
+color = "#2080ff"
+effect = "solid"
+output_mode = "powered-only"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 39
+color = "#000000"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 39
+color = "#00c030"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.battery]
+node = 0
+min_level = 1
+
+[[lighting.conditional_scene]]
+led = 38
+color = "#000000"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 38
+color = "#00c030"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.battery]
+node = 0
+min_level = 21
+
+[[lighting.conditional_scene]]
+led = 37
+color = "#000000"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 37
+color = "#00c030"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.battery]
+node = 0
+min_level = 41
+
+[[lighting.conditional_scene]]
+led = 36
+color = "#000000"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 36
+color = "#00c030"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.battery]
+node = 0
+min_level = 61
+
+[[lighting.conditional_scene]]
+led = 35
+color = "#000000"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 35
+color = "#00c030"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.battery]
+node = 0
+min_level = 81
+
+[[lighting.conditional_scene]]
+led = 79
+color = "#000000"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 79
+color = "#00c030"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.battery]
+node = 1
+min_level = 1
+
+[[lighting.conditional_scene]]
+led = 78
+color = "#000000"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 78
+color = "#00c030"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.battery]
+node = 1
+min_level = 21
+
+[[lighting.conditional_scene]]
+led = 77
+color = "#000000"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 77
+color = "#00c030"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.battery]
+node = 1
+min_level = 41
+
+[[lighting.conditional_scene]]
+led = 76
+color = "#000000"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 76
+color = "#00c030"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.battery]
+node = 1
+min_level = 61
+
+[[lighting.conditional_scene]]
+led = 75
+color = "#000000"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 75
+color = "#00c030"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.battery]
+node = 1
+min_level = 81
+
+[[lighting.conditional_scene]]
+led = 3
+color = "#202020"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 3
+color = "#2060ff"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.connection]
+profile = 0
+
+[[lighting.conditional_scene]]
+led = 3
+color = "#00ff30"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.connection]
+transport = "ble"
+profile = 0
+ble_state = "connected"
+
+[[lighting.conditional_scene]]
+led = 4
+color = "#202020"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 4
+color = "#2060ff"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.connection]
+profile = 1
+
+[[lighting.conditional_scene]]
+led = 4
+color = "#00ff30"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.connection]
+transport = "ble"
+profile = 1
+ble_state = "connected"
+
+[[lighting.conditional_scene]]
+led = 0
+color = "#202020"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 0
+color = "#2060ff"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.connection]
+profile = 2
+
+[[lighting.conditional_scene]]
+led = 0
+color = "#00ff30"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.connection]
+transport = "ble"
+profile = 2
+ble_state = "connected"
+
+[[lighting.conditional_scene]]
+led = 1
+color = "#202020"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[[lighting.conditional_scene]]
+led = 1
+color = "#2060ff"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.connection]
+profile = 3
+
+[[lighting.conditional_scene]]
+led = 1
+color = "#00ff30"
+effect = "solid"
+
+[lighting.conditional_scene.layer]
+layer = 2
+active = true
+
+[lighting.conditional_scene.connection]
+transport = "ble"
+profile = 3
+ble_state = "connected"

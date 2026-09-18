@@ -1,0 +1,6 @@
+[submodule "dependencies/moergo-rmk"]
+	path = dependencies/moergo-rmk
+	url = https://github.com/colonelpanic8/moergo-rmk.git
+[submodule "dependencies/rynkbench"]
+	path = dependencies/rynkbench
+	url = https://github.com/colonelpanic8/rynkbench.git

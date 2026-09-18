@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+product="$root/dependencies/moergo-rmk"
+usage() {
+  cat <<'HELP'
+Usage: scripts/keyboard COMMAND [ARGS]
+  edit             Open the unmodified visual editor
+  pull             Save live keyboard edits into this project
+  save FILE        Validate and adopt a downloaded editor TOML
+  check            Run offline project checks and regression tests
+  status           Show readiness and the next action
+  build-editor     Build the pinned visual editor
+  init             Initialize the pinned firmware submodules
+  validate         Validate config/runtime.toml offline
+  build-tools      Rebuild the pinned host CLI
+  build-firmware   Build both halves; save a timestamped artifact bundle
+  diff             Compare config/runtime.toml with the keyboard
+  backup           Export live keyboard config into private backups/
+  apply            Back up, detect conflicts, apply, and verify
+                   --replace-live explicitly replaces unsynced device edits
+  control ARGS     Run moergo-control directly (transport flags supported)
+Device commands (apply, pull, diff, backup):
+  --ble | --usb    Require Bluetooth or USB; default prefers USB, then BLE
+  --device VALUE  Select a full BLE address or USB hidraw path
+Example: ./keyboard apply --ble
+No command flashes firmware. Only apply/control can change device state.
+HELP
+}
+command=${1:-help}
+case "$command" in
+  help|-h|--help) usage; exit 0 ;;
+  init) cd "$root"; exec git submodule update --init --recursive ;;
+  validate|build-tools|build-firmware|diff|backup|apply|control|edit|build-editor|save|pull|check|status) ;;
+  *) usage >&2; exit 2 ;;
+esac
+shift
+# Start a fresh pinned environment once, without recursively spawning shells.
+if [[ ${GLOVE80_PROJECT_SHELL:-} != "$root" ]]; then
+  exec nix develop --quiet --impure --expr "import $root/shell.nix" --command env \
+    GLOVE80_PROJECT_SHELL="$root" "$root/scripts/keyboard" "$command" "$@"
+fi
+unset CARGO_TARGET_DIR
+export CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_DEV_INCREMENTAL=false CARGO_TERM_QUIET=true
+mkdir -p "$root/.cache/bin" "$root/artifacts" "$root/backups"
+# The initial trial used disposable RAM storage. Recreate ordinary local
+# caches if those symlinks no longer resolve after a reboot.
+for path in "$root/.cache/host-target" "$product/crates/glove80-rmk/target"; do
+  if [[ -L "$path" && ! -e "$path" ]]; then rm -- "$path"; fi
+done
+pin=$(git -C "$product" rev-parse HEAD)
+control="$root/.cache/bin/moergo-control"
+build_tools() {
+  local log="$root/.cache/build-tools.log"
+  if ! (cd "$product"; CARGO_TARGET_DIR="$root/.cache/host-target" \
+    cargo build --quiet --locked -p moergo-control) >"$log" 2>&1; then
+    tail -60 "$log" >&2; return 1
+  fi
+  local tmp="$root/.cache/bin/moergo-control.new"
+  strip -o "$tmp" "$root/.cache/host-target/debug/moergo-control"
+  mv -- "$tmp" "$control"
+  printf '%s\n' "$pin" > "$root/.cache/control-pin"
+}
+if [[ "$command" == build-tools ]]; then build_tools; exit 0; fi
+if [[ ! -x "$control" || ! -f "$root/.cache/control-pin" ]] || \
+   [[ $(cat "$root/.cache/control-pin") != "$pin" ]]; then build_tools; fi
+case "$command" in
+  validate) exec "$control" config validate "$root/config/runtime.toml" ;;
+  control) exec "$control" "$@" ;;
+  edit)
+    dist="$root/.cache/editor/dist"
+    if [[ ! -f "$dist/index.html" ]] ||
+       [[ $(cat "$dist/UPSTREAM_REVISION" 2>/dev/null) != $(git -C "$root/dependencies/rynkbench" rev-parse HEAD) ]] ||
+       [[ $(cat "$dist/FIRMWARE_REVISION" 2>/dev/null) != "$pin" ]] ||
+       [[ $(cat "$dist/RMK_REVISION" 2>/dev/null) != $(git -C "$product/dependencies/rmk" rev-parse HEAD) ]] ||
+       [[ $(cat "$dist/BUILD_MODE" 2>/dev/null) != upstream-only-v1 ]]; then
+      "$root/scripts/build-editor"
+    fi
+    exec python3 "$root/scripts/manage.py" edit "$@" ;;
+  apply|pull|save|diff|backup) exec python3 "$root/scripts/manage.py" "$command" "$@" ;;
+  build-editor) exec "$root/scripts/build-editor" ;;
+  check)
+    "$control" config validate "$root/config/runtime.toml"
+    python3 -m unittest discover -s "$root/tests" -p 'test_*.py'
+    python3 "$root/scripts/evaluate.py"
+    ;;
+  status) exec python3 "$root/scripts/evaluate.py" --status ;;
+  build-firmware)
+    "$control" config validate "$root/config/runtime.toml"
+    bundle=$(mktemp -d "$root/artifacts/build-$(date -u +%Y%m%dT%H%M%SZ)-XXXXXX")
+    cp "$root/config/firmware.toml" "$bundle/firmware.toml"
+    cp "$root/config/runtime.toml" "$bundle/runtime.toml"
+    export KEYBOARD_TOML_PATH="$bundle/firmware.toml" MOERGO_DIST_DIR="$bundle"
+    MOERGO_CONFIG_GIT_COMMIT=$(git -C "$root" rev-parse --verify HEAD 2>/dev/null || printf '%040d' 0)
+    export MOERGO_CONFIG_GIT_COMMIT
+    if [[ -n $(git -C "$root" status --porcelain) ]]; then
+      export MOERGO_CONFIG_GIT_DIRTY=true
+    else export MOERGO_CONFIG_GIT_DIRTY=false; fi
+    # xtask embeds CARGO_MANIFEST_DIR: do not reuse it after moving a checkout.
+    if ! (cd "$product"; cargo clean --quiet -p xtask --target-dir "$root/.cache/host-target" && CARGO_TARGET_DIR="$root/.cache/host-target" \
+      cargo build --quiet --locked -p xtask && \
+      "$root/.cache/host-target/debug/xtask" dist) >"$bundle/build.log" 2>&1; then
+      tail -60 "$bundle/build.log" >&2; exit 1
+    fi
+    (cd "$bundle"; sha256sum -c SHA256SUMS)
+    # All-zero config revision identifies an uncommitted project, never a
+    # fictitious commit. Preserve exact configuration content alongside it.
+    (cd "$bundle"; sha256sum firmware.toml runtime.toml > CONFIG_SHA256SUMS)
+    ln -sfn "$(basename "$bundle")" "$root/artifacts/current"
+    printf 'Firmware bundle: %s\n' "$bundle"
+    ;;
+esac

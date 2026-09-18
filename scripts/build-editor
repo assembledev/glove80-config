@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+source="$root/dependencies/rynkbench"
+product="$root/dependencies/moergo-rmk"
+editor="$root/.cache/editor"
+cache=${GLOVE80_BUILD_CACHE:-$root/.cache/editor-build}
+mkdir -p "$cache" "$editor" "$root/.cache/wasm-tools"
+log="$root/.cache/build-editor.log"
+echo 'Building the pinned visual editor. First build downloads its dependencies.'
+if ! (
+  git -C "$source" archive HEAD | tar -x -C "$editor"
+  rm -f "$editor/src/project.ts" "$editor/src/project.test.ts"
+  cd "$editor"
+  # A RAM cache can be used on constrained build hosts. npm's node_modules
+  # must keep that name for Node's transitive module resolution.
+  mkdir -p "$cache/npm-project"
+  cp package.json package-lock.json "$cache/npm-project/"
+  (cd "$cache/npm-project"; npm ci --ignore-scripts --no-audit --no-fund)
+  if [[ -L node_modules ]]; then rm node_modules; fi
+  if [[ ! -e node_modules ]]; then ln -s "$cache/npm-project/node_modules" node_modules; fi
+  CARGO_TARGET_DIR="$cache/bindgen" cargo install --quiet --locked wasm-bindgen-cli --version 0.2.126 --root "$root/.cache/wasm-tools"
+  mkdir -p "$cache/rmk"
+  git -C "$product/dependencies/rmk" archive HEAD | tar -x -C "$cache/rmk"
+  cp "$root/config/rynk-wasm-Cargo.lock" "$cache/rmk/rynk/Cargo.lock"
+  export RUST_MIN_STACK=67108864
+  (cd "$product"; CARGO_TARGET_DIR="$cache/config" cargo build --quiet --locked --release --target wasm32-unknown-unknown -p moergo-config-wasm)
+  CARGO_TARGET_DIR="$cache/rynk" cargo build --quiet --locked --release --target wasm32-unknown-unknown --manifest-path "$cache/rmk/rynk/Cargo.toml" -p rynk-wasm
+  for kind in config rynk; do
+    if [[ $kind == config ]]; then package=moergo-config-wasm; module=moergo_config_wasm; repo="$product"; else package=rynk-wasm; module=rynk_wasm; repo="$product/dependencies/rmk"; fi
+    "$root/.cache/wasm-tools/bin/wasm-bindgen" "$cache/$kind/wasm32-unknown-unknown/release/$module.wasm" --target web --out-dir "src/vendor/$package"
+    printf '{"rev":"%s"}\n' "$(git -C "$repo" rev-parse HEAD)" > "src/vendor/$package/build-rev.json"
+  done
+  cp "$root/tests/editor-roundtrip.test.ts" src/project-roundtrip.test.ts
+  export GLOVE80_PROJECT_ROOT="$root"
+  node_modules/.bin/tsc -b
+  node_modules/.bin/vitest run
+  node_modules/.bin/vite build --base /
+  printf '%s\n' "$(git -C "$source" rev-parse HEAD)" > dist/UPSTREAM_REVISION
+  printf 'upstream-only-v1\n' > dist/BUILD_MODE
+  git -C "$product" rev-parse HEAD > dist/FIRMWARE_REVISION
+  git -C "$product/dependencies/rmk" rev-parse HEAD > dist/RMK_REVISION
+) >"$log" 2>&1; then
+  tail -50 "$log" >&2; exit 1
+fi
+echo "Editor built and tested. Open it with ./keyboard edit. Log: $log"
