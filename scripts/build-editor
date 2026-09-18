@@ -8,7 +8,9 @@ cache=${GLOVE80_BUILD_CACHE:-$root/.cache/editor-build}
 mkdir -p "$cache" "$editor" "$root/.cache/wasm-tools"
 log="$root/.cache/build-editor.log"
 echo 'Building the pinned visual editor. First build downloads its dependencies.'
-if ! (
+# Keep the build outside an if/! condition: Bash disables errexit inside it.
+trap 'tail -50 "$log" >&2' ERR
+(
   git -C "$source" archive HEAD | tar -x -C "$editor"
   rm -f "$editor/src/project.ts" "$editor/src/project.test.ts"
   cd "$editor"
@@ -27,9 +29,9 @@ if ! (
   (cd "$product"; CARGO_TARGET_DIR="$cache/config" cargo build --quiet --locked --release --target wasm32-unknown-unknown -p moergo-config-wasm)
   CARGO_TARGET_DIR="$cache/rynk" cargo build --quiet --locked --release --target wasm32-unknown-unknown --manifest-path "$cache/rmk/rynk/Cargo.toml" -p rynk-wasm
   for kind in config rynk; do
-    if [[ $kind == config ]]; then package=moergo-config-wasm; module=moergo_config_wasm; repo="$product"; else package=rynk-wasm; module=rynk_wasm; repo="$product/dependencies/rmk"; fi
+    if [[ $kind == config ]]; then package=moergo-config-wasm; module=moergo_config_wasm; input=moergo-rmk; repo="$product"; else package=rynk-wasm; module=rynk_wasm; input=rmk; repo="$product/dependencies/rmk"; fi
     "$root/.cache/wasm-tools/bin/wasm-bindgen" "$cache/$kind/wasm32-unknown-unknown/release/$module.wasm" --target web --out-dir "src/vendor/$package"
-    printf '{"rev":"%s"}\n' "$(git -C "$repo" rev-parse HEAD)" > "src/vendor/$package/build-rev.json"
+    printf '{"input":"%s","rev":"%s"}\n' "$input" "$(git -C "$repo" rev-parse HEAD)" > "src/vendor/$package/build-rev.json"
   done
   cp "$root/tests/editor-roundtrip.test.ts" src/project-roundtrip.test.ts
   export GLOVE80_PROJECT_ROOT="$root"
@@ -40,7 +42,5 @@ if ! (
   printf 'upstream-only-v1\n' > dist/BUILD_MODE
   git -C "$product" rev-parse HEAD > dist/FIRMWARE_REVISION
   git -C "$product/dependencies/rmk" rev-parse HEAD > dist/RMK_REVISION
-) >"$log" 2>&1; then
-  tail -50 "$log" >&2; exit 1
-fi
+) >"$log" 2>&1
 echo "Editor built and tested. Open it with ./keyboard edit. Log: $log"

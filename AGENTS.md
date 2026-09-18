@@ -33,11 +33,13 @@ layout editing through the supported upstream interfaces.
 ## Verification
 
 Run commands from the repository root. Linux, Git, and Nix with flakes are
-required; `./keyboard` enters the pinned tool environment. Use `./keyboard init`
+required. Use direnv or `nix develop`, then `just` recipes; `./keyboard`
+also enters the pinned flake environment when invoked outside the shell. Use `./keyboard init`
 when submodules are missing and `./keyboard help` for the command interface.
 
 | Change | Required verification |
 |---|---|
+| Flake or task recipes | `nix flake check`, `nix develop --command just check` |
 | Runtime configuration | `./keyboard validate` |
 | Project scripts or tests | `./keyboard check` |
 | Editor build, codec compatibility, or editor round-trip tests | `./keyboard build-editor` |

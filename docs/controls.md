@@ -5,10 +5,13 @@ preserves its supplied bindings. **Physical B + Right Arrow** toggles Gaming;
 those same positions are **F + C** while Gaming is active. Press within 50 ms.
 Exit Gaming before using Magic, since Gaming intentionally replaces that key.
 
-The eight Base tap/holds retain their explicit outputs: F1–F5 / GUI+F1–F5,
-Print Screen / GUI+Print Screen, 1 / Shift+1, and 7 / Shift+Slash.
-RMK uses a 200 ms hold threshold; matching outputs does not prove identical ZMK
-rollover/timing. Test ordinary typing before relying on them.
+On Base, tapping F1–F5 sends the normal function key. Holding for 200 ms
+runs a macro that presses Super, taps the corresponding F-key, and releases
+Super once. Keeping the physical key held does not repeat the workspace
+shortcut or keep Super held; release and hold again to trigger it again.
+
+The other Base tap/holds remain Print Screen / GUI+Print Screen,
+1 / Shift+1, and 7 / Shift+Slash, with a 200 ms hold threshold.
 
 ## Magic
 

@@ -53,23 +53,10 @@ KC_G KC_LSFT KC_A KC_S KC_D KC_F KC_LCTL KC_DOWN KC_N KC_M KC_COMM KC_DOT KC_SLS
 KC_B KC_LCTL KC_Z KC_X KC_C -- KC_ENT KC_LEFT -- KC_MINS KC_LBRC KC_RBRC KC_EQL KC_GRV
 """
 
-[[layer]]
-id = "layer4"
-name = "Mac Hyper"
-keys = """
-
-KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS -- KC_TRNS KC_TRNS -- KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS
-KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS TG(4) KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS
-KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS
-KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS
-KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS
-KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS -- KC_TRNS MOD(MOD_LCTL|MOD_LALT|MOD_LGUI) -- KC_TRNS KC_TRNS KC_TRNS KC_TRNS KC_TRNS
-"""
-
 [[morse]]
 name = "Base key 0 tap-hold"
 tap = "KC_F1"
-hold = "LGUI(KC_F1)"
+hold = "MACRO(0)"
 hold_timeout_ms = 200
 gap_timeout_ms = 200
 quick_tap_ms = 0
@@ -78,7 +65,7 @@ mode = "normal"
 [[morse]]
 name = "Base key 1 tap-hold"
 tap = "KC_F2"
-hold = "LGUI(KC_F2)"
+hold = "MACRO(1)"
 hold_timeout_ms = 200
 gap_timeout_ms = 200
 quick_tap_ms = 0
@@ -87,7 +74,7 @@ mode = "normal"
 [[morse]]
 name = "Base key 2 tap-hold"
 tap = "KC_F3"
-hold = "LGUI(KC_F3)"
+hold = "MACRO(2)"
 hold_timeout_ms = 200
 gap_timeout_ms = 200
 quick_tap_ms = 0
@@ -96,7 +83,7 @@ mode = "normal"
 [[morse]]
 name = "Base key 3 tap-hold"
 tap = "KC_F4"
-hold = "LGUI(KC_F4)"
+hold = "MACRO(3)"
 hold_timeout_ms = 200
 gap_timeout_ms = 200
 quick_tap_ms = 0
@@ -105,7 +92,7 @@ mode = "normal"
 [[morse]]
 name = "Base key 4 tap-hold"
 tap = "KC_F5"
-hold = "LGUI(KC_F5)"
+hold = "MACRO(4)"
 hold_timeout_ms = 200
 gap_timeout_ms = 200
 quick_tap_ms = 0
@@ -190,7 +177,7 @@ mode = "normal"
 [pointing]
 
 [lighting]
-brightness = 207
+brightness = 122
 output_mode = "always-on"
 wake_layers = [2]
 scene_policy = "effective-only"
@@ -205,7 +192,7 @@ mode = "solid"
 
 [lighting.effects]
 effect = "Gradient"
-palette = "Polarized"
+palette = "Dracula"
 value = 255
 speed = 96
 
@@ -654,3 +641,43 @@ active = true
 transport = "ble"
 profile = 3
 ble_state = "connected"
+
+[[macro]]
+name = "Switch to workspace 1"
+operations = [
+  { operation = "down", keycode = "KC_LGUI" },
+  { operation = "tap", keycode = "KC_F1" },
+  { operation = "up", keycode = "KC_LGUI" },
+]
+
+[[macro]]
+name = "Switch to workspace 2"
+operations = [
+  { operation = "down", keycode = "KC_LGUI" },
+  { operation = "tap", keycode = "KC_F2" },
+  { operation = "up", keycode = "KC_LGUI" },
+]
+
+[[macro]]
+name = "Switch to workspace 3"
+operations = [
+  { operation = "down", keycode = "KC_LGUI" },
+  { operation = "tap", keycode = "KC_F3" },
+  { operation = "up", keycode = "KC_LGUI" },
+]
+
+[[macro]]
+name = "Switch to workspace 4"
+operations = [
+  { operation = "down", keycode = "KC_LGUI" },
+  { operation = "tap", keycode = "KC_F4" },
+  { operation = "up", keycode = "KC_LGUI" },
+]
+
+[[macro]]
+name = "Switch to workspace 5"
+operations = [
+  { operation = "down", keycode = "KC_LGUI" },
+  { operation = "tap", keycode = "KC_F5" },
+  { operation = "up", keycode = "KC_LGUI" },
+]

@@ -37,7 +37,7 @@ esac
 shift
 # Start a fresh pinned environment once, without recursively spawning shells.
 if [[ ${GLOVE80_PROJECT_SHELL:-} != "$root" ]]; then
-  exec nix develop --quiet --impure --expr "import $root/shell.nix" --command env \
+  exec nix develop --quiet "$root" --command env \
     GLOVE80_PROJECT_SHELL="$root" "$root/scripts/keyboard" "$command" "$@"
 fi
 unset CARGO_TARGET_DIR

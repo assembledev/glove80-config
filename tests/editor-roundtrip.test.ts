@@ -41,3 +41,14 @@ it("opens the personal workspace, retains priority bindings and lighting, and ex
     writeFileSync(`${root}/.cache/editor-roundtrip.toml`, output);
   } finally { await session.close(); }
 });
+
+it("encodes all five workspace shortcuts as complete press-tap-release macros", () => {
+  const source = parseDocument(text, offlineGlove80Catalog());
+  const expected = Array.from({ length: 5 }, (_, i) => [
+    1, 2, 0xe3, // Left GUI down
+    1, 1, 0x3a + i, // F1-F5 tap
+    1, 3, 0xe3, // Left GUI up
+    0, // end of macro
+  ]).flat();
+  expect(source.snapshot.behaviors?.macros).toEqual(expected);
+});

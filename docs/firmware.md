@@ -14,6 +14,25 @@ The editor's WASM codecs are built from **our pinned firmware and RMK sources**,
 not fetched from the changing hosted editor. `config/rynk-wasm-Cargo.lock` locks
 its browser-side dependencies. There are no downstream source patches or injected editor features.
 
+## Environment
+
+Run `direnv allow` once in this checkout, or enter `nix develop` manually.
+`just` lists the common tasks; `just edit` starts the editor, `just save FILE`
+imports an export, and `just apply` writes it over Bluetooth with verification.
+`just pull`, `just diff`, and `just backup` also default to Bluetooth. Pass
+`--usb` to use a cable. The underlying `./keyboard` commands remain available
+outside the shell and enter the same flake environment automatically.
+
+The root `flake.lock` pins the firmware development environment and follows
+its nixpkgs/toolchain pins. The firmware input must match the Git submodule
+revision. When updating dependencies, update both pins. `nix flake check`
+runs hardware-free transaction tests, checks shell/recipe syntax, and verifies
+Nix formatting. `just check` additionally validates the saved runtime and local
+firmware artifacts using the upstream CLI. Run `just fmt` to format the flake.
+The flake source uses Git’s tracked files; private ignored backups and build
+outputs are excluded. After adding new flake-referenced files, add them to Git
+so Nix can see them. No system configuration or udev rules are installed.
+
 ## Commands
 
 | Command | Purpose |
@@ -36,6 +55,12 @@ closing the browser; adopt it with `save`. For live editing, use Rynkbench’s U
 device connection and run `pull` with the matching transport. The local server serves editor assets only and has no
 project write API.
 Use one device client at a time. There is no automatic background sync.
+
+Removing a layer from a TOML file does not erase its existing device slot:
+upstream `config apply --exact` replaces omitted behavior tables, not omitted
+keymap layers. Delete a live layer in Rynkbench, which clears both its keymap
+and occupied/name metadata, then `pull` the result. The firmware retains spare
+layer capacity; an empty trailing slot is omitted from exported layouts.
 
 ## Transport selection
 

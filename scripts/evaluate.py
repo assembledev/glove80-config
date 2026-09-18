@@ -80,6 +80,8 @@ def artifacts():
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--status',action='store_true');parser.add_argument('--migration',action='store_true');args=parser.parse_args()
     config=tomllib.loads((ROOT/'config/runtime.toml').read_text())
+    lock=json.loads((ROOT/'flake.lock').read_text())
+    require(lock['nodes']['firmware']['locked']['rev']==PINS['moergo-rmk'], 'Flake firmware pin differs from the reviewed submodule pin')
     require(len(config['layer'])<=16 and all(len(x['keys'].split())==84 for x in config['layer']),'Invalid layer dimensions')
     for name,pin in PINS.items():
         actual=subprocess.check_output(['git','-C',str(ROOT/'dependencies'/name),'rev-parse','HEAD'],text=True).strip()
