@@ -46,7 +46,7 @@ to save them into the project. `just diff` compares the project with the keyboar
 Applying stops if there are unsynced device changes.
 
 For direct editing through a browser device connection, see
-[live editing and browser support](docs/firmware.md#commands).
+[live editing and browser support](docs/firmware.md#live-editing).
 
 ## Documentation
 
@@ -54,3 +54,7 @@ For direct editing through a browser device connection, see
 - [Installation and recovery](docs/first-install.md): flashing and restoring firmware.
 - [Maintenance](docs/firmware.md): builds, dependencies, connections and backups.
 - [Evaluation](docs/evaluation.md): validation results and hardware limitations.
+
+## License
+
+[GNU GPLv3](LICENSE). Dependencies retain their own licenses.

@@ -1,120 +1,128 @@
 # Maintenance
 
-## What we use from Colonel
+## Configuration and dependencies
 
-| Component | Owner | Our use |
-|---|---|---|
-| Glove80 hardware, builds, host CLI | `dependencies/moergo-rmk` | Pinned submodule; owns its nested RMK, PaletteFX and assembly revisions |
-| Visual keymap/lighting editor | `dependencies/rynkbench` | Pinned submodule; unmodified upstream editor |
-| Personal config examples | Colonel's `moergo-config` | Reference only; not a dependency or the owner of our layout |
-| Bindings and lighting | `config/runtime.toml` | Saved by the visual editor; applied through the host CLI |
-| Board settings | `config/firmware.toml` | Compiled settings, including the five-minute sleep timeout |
+| Path | Purpose |
+|---|---|
+| `config/runtime.toml` | Saved layers, bindings, behaviors and lighting; applied without reflashing |
+| `config/firmware.toml` | Compiled board, power and hardware settings |
+| `dependencies/moergo-rmk` | Pinned firmware and host CLI, including its nested RMK and lighting dependencies |
+| `dependencies/rynkbench` | Pinned visual editor |
+| `flake.lock` | Development environment and toolchain dependencies |
+| `config/rynk-wasm-Cargo.lock` | Editor protocol codec dependencies |
 
-The editor's WASM codecs are built from **our pinned firmware and RMK sources**,
-not fetched from the changing hosted editor. `config/rynk-wasm-Cargo.lock` locks
-its browser-side dependencies. There are no downstream source patches or injected editor features.
-
-## Environment
-
-Run `direnv allow` once in this checkout, or enter `nix develop` manually.
-`just` lists the common tasks; `just edit` starts the editor, `just save FILE`
-imports an export, and `just apply` writes it over Bluetooth with verification.
-`just pull`, `just diff`, and `just backup` also default to Bluetooth. Pass
-`--usb` to use a cable. The underlying `./keyboard` commands remain available
-outside the shell and enter the same flake environment automatically.
-
-The root `flake.lock` pins the firmware development environment and follows
-its nixpkgs/toolchain pins. The firmware input must match the Git submodule
-revision. When updating dependencies, update both pins. `nix flake check`
-runs hardware-free transaction tests, checks shell/recipe syntax, and verifies
-Nix formatting. `just check` additionally validates the saved runtime and local
-firmware artifacts using the upstream CLI. Run `just fmt` to format the flake.
-The flake source uses Git’s tracked files; private ignored backups and build
-outputs are excluded. After adding new flake-referenced files, add them to Git
-so Nix can see them. No system configuration or udev rules are installed.
+The editor's WASM codecs are built from the pinned firmware and RMK sources.
+Keep the firmware flake input and Git submodule on the same revision. Dependency
+source trees remain unmodified.
 
 ## Commands
 
+Use the [project environment](../README.md#setup), then run `just` for the full
+command list. `./keyboard COMMAND` also works outside the environment and enters
+it automatically.
+
 | Command | Purpose |
 |---|---|
-| `./keyboard init` | Initialize pinned submodules after checkout |
-| `./keyboard edit` | Serve upstream Rynkbench on a random localhost port; build it if missing |
-| `./keyboard save FILE` | Validate a downloaded TOML and adopt it, with a backup |
-| `./keyboard pull` | Export the selected keyboard into the project, preserving layer names |
-| `./keyboard diff` | Show project/device differences; nonzero can mean differences or a connection error |
-| `./keyboard backup` | Save a private live export without changing the project |
-| `./keyboard apply` | Back up, reject unsynced device edits, preview, write, verify and record sync |
-| `./keyboard apply --replace-live` | Explicitly replace an unsynced device configuration, still with backup and verification |
-| `./keyboard check` | Validate runtime, run transaction/server regressions, check pins and current images |
-| `./keyboard build-editor` | Rebuild codecs and editor; run typechecking and its complete test suite |
-| `./keyboard build-firmware` | Build both halves into a new timestamped bundle, with configuration snapshots and checksums |
-| `./keyboard control ARGS` | Advanced upstream CLI access; can bypass project safeguards |
+| `just init` | Initialize pinned submodules |
+| `just edit` | Build if needed and serve the editor on localhost |
+| `just save FILE` | Validate and import an editor export, backing up the project file |
+| `just pull` | Save live keyboard settings into the project |
+| `just diff` | Compare the project with the keyboard |
+| `just backup` | Export the keyboard into a private backup without changing the project |
+| `just apply` | Back up, check for conflicts, preview, apply and verify readback |
+| `just build-tools` | Rebuild the host CLI |
+| `just build-editor` | Build and test the editor and codecs |
+| `just build-firmware` | Build a matching left/right image bundle; flashing is manual |
+| `just check` | Run the [offline checks](evaluation.md#automated-checks) |
+| `just control ARGS` | Access the upstream CLI directly, bypassing project transaction safeguards |
 
-Only the apply/control commands can write to the keyboard. For offline editing, open the project TOML and download the edited TOML before
-closing the browser; adopt it with `save`. For live editing, use Rynkbench’s USB or Bluetooth transport, then close its
-device connection and run `pull` with the matching transport. The local server serves editor assets only and has no
-project write API.
-Use one device client at a time. There is no automatic background sync.
+Close other device configurators before a device operation. There is no
+background synchronization. If apply reports unsynced device edits, use
+`just pull` to retain them. Use `just apply --replace-live` only after reviewing
+and choosing to replace the device configuration; it still takes a backup.
 
-Removing a layer from a TOML file does not erase its existing device slot:
-upstream `config apply --exact` replaces omitted behavior tables, not omitted
-keymap layers. Delete a live layer in Rynkbench, which clears both its keymap
-and occupied/name metadata, then `pull` the result. The firmware retains spare
-layer capacity; an empty trailing slot is omitted from exported layouts.
+### Layer removal
+
+Omitting a layer from TOML does not erase its device slot. Upstream
+`config apply --exact` replaces omitted behavior tables but not omitted keymap
+layers. Delete the layer through a live Rynkbench connection, which clears its
+keymap and occupied/name metadata, then run `just pull`. An empty trailing slot
+is omitted from exports; firmware layer capacity remains available.
 
 ## Transport selection
 
-`apply`, `pull`, `backup`, and `diff` share these options:
+`just apply`, `pull`, `diff` and `backup` default to Bluetooth. They accept:
 
-- No transport flag: upstream auto-selection prefers accessible USB, then BLE.
-- `--ble`: require Bluetooth. Pair/bond the keyboard with the host first.
-- `--usb`: require USB. This and `--ble` are mutually exclusive.
-- `--device VALUE`: select a full BLE address or USB `/dev/hidraw*` path.
-  An explicit selection must match; it does not select another keyboard on failure.
+| Option | Behavior |
+|---|---|
+| `--ble` | Require Bluetooth; pair the keyboard with the host first |
+| `--usb` | Require USB; cannot be combined with `--ble` |
+| `--device VALUE` | Select a full BLE address or USB `/dev/hidraw*` path |
 
-For example, `./keyboard pull --ble` saves wireless live edits, and
-`./keyboard apply --ble --device AA:BB:CC:DD:EE:FF` targets a particular paired
-keyboard (replace the example address). The selection is passed to every device
-read, preview, write, and verification in that operation. Local file validation
-remains offline. A failed explicit BLE operation is not retried over USB.
+When supplying a device selector through `just`, include the intended transport,
+for example `just diff --ble --device AA:BB:CC:DD:EE:FF` with the actual address.
+The underlying `./keyboard` commands without transport flags prefer accessible
+USB, then Bluetooth. An explicit transport or device failure does not trigger a
+fallback to another device.
 
-On Linux, USB configuration requires read/write access to the keyboard’s
-Rynk `/dev/hidraw*` interface (USB interface 02, VID 16c0, PID 27db). A
-bootloader drive being writable does not grant HID access. Device-node ACLs
-are temporary and disappear on reconnect; a narrowly scoped host udev rule
-is needed for persistent user access. This project does not install that rule.
+On Linux, USB configuration needs read/write access to the keyboard's Rynk
+`/dev/hidraw*` interface: USB interface 02, VID `16c0`, PID `27db`. Bootloader
+mass-storage access is separate. A temporary device-node ACL is lost on reconnect;
+configure a narrowly scoped host udev rule for persistent access. This repository
+does not install host rules.
 
-Rynkbench supports Web Bluetooth as well as USB; browser support depends on the
-platform. On Linux, Chromium may require its experimental web-platform flag;
-see [Chrome's Web Bluetooth documentation](https://developer.chrome.com/docs/capabilities/bluetooth).
-The native CLI BLE transport does not depend on browser Bluetooth support.
-No wireless hardware qualification is implied by wrapper tests.
+### Live editing
 
-## Files and reproducibility
+`just edit` launches the browser version of Rynkbench. Opening and downloading a
+layout file does not require browser access to the keyboard. Direct device
+editing requires a transport supported by the browser:
 
-`backups/` contains original imports, replaced project files, live exports and
-rollback images. `backups/last-synced.toml` is the last verified device snapshot;
-it detects edits made outside the project. Losing it is safe: the next apply
-requires an explicit replacement. `artifacts/` contains image bundles and
-hardware results. Both directories are private and ignored by Git; copy them
-into your normal backup system before moving to another machine.
+- USB uses WebHID, or Web Serial where supported by the firmware.
+- Bluetooth uses Web Bluetooth. Linux Chromium may need the experimental
+  web-platform flag; consult [Chrome's documentation](https://developer.chrome.com/docs/capabilities/bluetooth).
+- The editor's native USB and Bluetooth choices require the upstream desktop
+  application, which `just edit` does not launch.
 
-`.cache/` is disposable tool/build output. Rebuilding the editor recreates it.
-For a small build disk, set `GLOVE80_BUILD_CACHE` to an absolute directory on a
-larger filesystem. RAM build directories disappear at reboot. The completed
-editor's `dist/` is kept on disk, so ordinary editing does not need Rust builds.
+The editor disables a transport when its API is unavailable. The CLI's Bluetooth
+connection is independent of browser support, so the file workflow remains usable
+in browsers without device APIs. After live edits, close the editor's device
+connection and run `just pull` to capture them.
 
-`artifacts/current` points to the last successfully built bundle. An all-zero
-configuration commit in its manifest means this project has no commit yet; the
-saved files and `CONFIG_SHA256SUMS` identify its exact contents.
+## Builds and local data
 
-Firmware bundles contain separate LH/RH UF2s, a manifest, checksums, configuration
-snapshots and a log. Do not mix halves from different bundles. Initial-trial
-ELFs are compressed: its `ARTIFACTS.sha256` covers the delivered files, while
-`SHA256SUMS` names the original uncompressed ELFs.
+Firmware builds create dated bundles under `artifacts/`; `artifacts/current`
+points to the last successful bundle. Each contains separate left/right UF2s,
+source/build metadata, checksums, configuration snapshots and a build log. Use
+the manifest to identify images and keep each pair together.
 
-To update, inspect upstream changes, change the parent submodule pins
-intentionally, update the expected pins in `scripts/evaluate.py`, then rebuild
-both firmware and editor and repeat the hardware trial. Do not advance the
-nested RMK fork independently. Retain the previous working image pair and live
-config until the new pair passes. These tools do not create commits or remotes.
+`backups/` stores replaced project files and live device exports.
+`backups/last-synced.toml` records the verified device state used for conflict
+checks. Without it, apply requires an explicit replacement decision. Include
+backups and recovery images in your own backup system: `backups/` and `artifacts/`
+are ignored by Git and absent from a fresh clone.
+
+`.cache/` contains disposable host tools and editor build output. To place editor
+compiler output on another filesystem, set `GLOVE80_BUILD_CACHE` to an absolute
+directory before running `just build-editor`. RAM-backed build directories are
+lost on reboot. The completed editor remains in `.cache/editor/dist/`.
+
+Nix uses Git-tracked project files. Add new flake-referenced files to Git before
+checking them. Run `just fmt` after changing the flake.
+
+## Dependency updates
+
+1. Review upstream firmware and editor changes together for protocol and codec
+   compatibility.
+2. Update the parent submodule revisions. Initialize their nested dependencies
+   with `git submodule update --init --recursive`; retain the nested revisions
+   selected by the firmware project.
+3. Match `inputs.firmware.url` in `flake.nix` to the firmware submodule and update
+   its lock entry. Update `PINS` in `scripts/evaluate.py`. Review whether the
+   editor codec's Cargo lock also needs updating.
+4. Run the [automated checks](evaluation.md#automated-checks), including fresh
+   editor and firmware builds.
+5. Back up the live configuration, keep the previous working image pair, install
+   the new pair, and perform the [hardware checks](evaluation.md#hardware-checks).
+
+Retain the previous bundle and recovery image until the new installation has
+passed the checks you rely on.

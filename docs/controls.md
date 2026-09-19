@@ -1,63 +1,78 @@
 # Controls
 
-Base is your QWERTY layout. Gaming preserves all 80 source bindings. Lower also
-preserves its supplied bindings. **Physical B + Right Arrow** toggles Gaming;
-those same positions are **F + C** while Gaming is active. Press within 50 ms.
-Exit Gaming before using Magic, since Gaming intentionally replaces that key.
+Key names below refer to physical QWERTY positions. The complete bindings are in
+`config/runtime.toml`; open it in the editor to inspect individual keys.
 
-On Base, tapping F1–F5 sends the normal function key. Holding for 200 ms
-runs a macro that presses Super, taps the corresponding F-key, and releases
-Super once. Keeping the physical key held does not repeat the workspace
-shortcut or keep Super held; release and hold again to trigger it again.
+## Layers
 
-The other Base tap/holds remain Print Screen / GUI+Print Screen,
-1 / Shift+1, and 7 / Shift+Slash, with a 200 ms hold threshold.
+| Layer | Use |
+|---|---|
+| Base | QWERTY typing and function keys |
+| Lower | Navigation, keypad, media and display-brightness controls |
+| Magic | Lighting, Bluetooth profiles and firmware controls |
+| Gaming | Dedicated gaming bindings |
+
+Hold Lower or Magic to use that layer. Press **B + Right Arrow** together within
+50 ms to toggle Gaming. In Gaming, the same physical positions are **F + C**.
+Toggle back to Base before using Magic.
+
+## Tap and hold
+
+On Base, F1–F5 have a 200 ms hold threshold:
+
+- Tap: send the function key.
+- Hold: press Super, tap the corresponding function key once, then release Super.
+  Release and hold again to trigger another shortcut.
+
+Workspace switching requires the host to bind Super+F1–F5 to workspaces.
+The keyboard sends these shortcuts; it does not configure the desktop.
+
+The remaining Base tap/holds use the same threshold:
+
+| Key | Tap | Hold |
+|---|---|---|
+| Print Screen | Print Screen | Super+Print Screen |
+| 1 | 1 | Shift+1 |
+| 7 | 7 | Shift+Slash |
 
 ## Magic
 
-Names below refer to the physical QWERTY labels.
-
 | Shortcut | Action |
 |---|---|
-| Magic+T | All lighting on/off; holding Magic still permits its status view |
+| Magic+T | All lighting on/off; Magic can still show status indicators |
 | Magic+G | Next background animation |
-| Magic+S | Animation on/off, keeping meaningful highlights |
-| Magic+R / F | Master brightness up/down for all LEDs (0–255) |
+| Magic+S | Background animation on/off |
+| Magic+R / F | Master brightness up/down for all LEDs |
 | Magic+E / D | Next/previous palette |
 | Magic+Q / A | Animation speed up/down |
-| Magic+W | Cycle lighting always-on / always-off / USB-powered-only |
+| Magic+W | Cycle always-on / always-off / USB-powered-only lighting policy |
 | Magic+Space / left Ctrl | Select Bluetooth slot 0 / 1 |
 | Magic+left Shift / left Alt | Select Bluetooth slot 2 / 3 |
 | Magic+left GUI | Prefer USB output |
-| Magic+F1 | Clear the selected host's Bluetooth bond |
+| Magic+F1 | Clear the selected Bluetooth slot's host bond |
 | Magic+Print Screen | Clear all host Bluetooth bonds |
-| Magic+Esc / Quote | Left / right bootloader |
+| Magic+Esc / Quote | Enter the left / right bootloader |
 
-The Magic controls differ from ZMK: palettes replace continuous hue, and W/S
-replace saturation controls with output policy and animation toggle. These
-changes enable highlights and effects to be controlled independently.
-Bluetooth pairing and recovery details are in [first install](first-install.md).
+See [Bluetooth pairing](first-install.md#pair-bluetooth) and
+[firmware recovery](first-install.md#recover) for connection and recovery steps.
 
 ## Lighting
 
-Lower has eight highlights: yellow screen brightness, blue volume/mute, and
-green media controls. They overlay the normal effect instead of selecting a
-special layer effect. Other layers add no whole-keyboard mask. Gaming's black
-editor decorations do not add LEDs; an enabled background animation still runs.
-Magic+S enables or disables the animation without removing layer highlights.
-Magic+R/F scales all RGB together: animations, Lower highlights and Magic
-indicators. Animation intensity is kept at 255 when enabled, leaving master
-brightness as the shared adjustment. Magic+T controls all lighting. Magic+W cycles between
-always-on, always-off and USB-powered-only; the T indicator shows green, red
-or blue respectively. Choose always-on for Lower highlights while wireless.
+Lower adds eight highlights over the background animation: yellow for display
+brightness, blue for volume/mute, and green for media controls. Base and Gaming
+add no layer highlights; the selected background animation can still run.
+Use Magic+S to disable only the animation while retaining layer highlights.
+Choose the always-on policy to allow lighting while wireless.
 
-Lower highlights retain their original relative intensities, and Magic
-indicators retain their status colors; master brightness scales both.
-The pinned firmware resets master brightness to 255 on boot; the common
-control works during use, but its chosen level does not survive a power cycle.
+Magic+R/F controls brightness across animations, Lower highlights and Magic
+indicators. Animation intensity is set to its maximum so master brightness is
+the shared adjustment. The pinned firmware resets master brightness to 255 on
+boot; the level selected during use does not survive a power cycle.
 
-Holding Magic shows a five-segment battery bar on each outer column. T shows
-lighting policy (green on, red off, blue USB-only). Bluetooth thumb indicators
-are blue for selected and green for connected and carrying typing. These are
-our RMK status indicators, not a reproduction of MoErgo's original display.
-Their physical behavior remains part of the hardware trial.
+While Magic is held:
+
+- Each outer column shows a five-segment battery bar for its half.
+- T shows the lighting policy: green for always-on, red for always-off, blue for
+  USB-powered-only.
+- Bluetooth thumb indicators are blue for the selected slot and green when
+  that slot is connected and carrying keyboard output.

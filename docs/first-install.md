@@ -1,69 +1,86 @@
-# First install and recovery
+# Installation and recovery
 
-Do this with a spare keyboard available. The firmware images have passed build
-and image checks; BLE reliability, physical key behavior and battery use have
-not yet been tested on this keyboard.
+This guide installs the firmware built by this repository on both Glove80
+halves, then loads the saved layout. For routine layout changes, use the
+[editing workflow](../README.md#edit-and-apply).
 
-## Before flashing
+## Prepare
 
-Keep a **known-working ZMK UF2** in `backups/rollback/`. None is present yet.
-The original JSON in `backups/original/source-layout.json` preserves your layout,
-but cannot restore firmware by itself. Obtain the UF2 from your existing working
-build or build that JSON with its required MoErgo firmware selection. Do not
-mistake a bootloader's `CURRENT.UF2` dump for a verified recovery image.
+Complete the [environment setup](../README.md#setup). Have a USB data cable,
+a spare keyboard or on-screen keyboard, and a known-working firmware image
+for recovery. Keep the recovery image in `backups/rollback/` or another safe
+location. A layout JSON alone cannot restore firmware.
 
-Run `./keyboard check`. The checked RMK pair is in
-`artifacts/current/`: `glove80-rmk-0.1.0-lh.uf2` and
-`glove80-rmk-0.1.0-rh.uf2`. Keep the pair together. If compiled settings or
-firmware revisions change, run `./keyboard build-firmware` and use the newly
-created bundle instead.
+Build a matching image pair from the checked-out configuration:
 
-## Install and load your layout
+```sh
+just build-firmware
+just check
+```
 
-1. Use MoErgo's [hardware bootloader procedure](https://docs.moergo.com/glove80-user-guide/customizing-key-layout/#putting-glove80-into-bootloader-for-firmware-loading):
-   switch a half off, connect USB, hold physical C6R6+C3R3, and switch on.
-   On the original layout these are Magic+E on the left, I+PgDn on the right.
-2. Check the volume name. Copy **LH only to GLV80LHBOOT**, and **RH only to
-   GLV80RHBOOT**. These RMK images are separate, unlike a combined ZMK image.
-   Wait for each copy to finish and its bootloader volume to disappear.
-3. Turn on both halves and connect the left half by USB. Run
-   `./keyboard control --usb version`. A new flash initially uses the upstream
-   layout until you apply yours.
-4. Run `./keyboard diff` to inspect the initial differences, then
-   `./keyboard apply --replace-live`. This saves the initial live configuration
-   before writing yours. A command failure is a stop, not a reason to flash again.
-5. Check USB typing from both halves, then follow the trial below. Changing from
-   ZMK to RMK can require removing the old host Bluetooth pairing and pairing anew.
+A fresh clone contains no firmware images. A successful build creates a dated
+bundle and points `artifacts/current` to it. The bundle's `manifest.json`
+identifies the left and right UF2 files; retain the bundle with its checksums
+and configuration snapshots. Always use both halves from the same build.
 
-## Hardware trial
+## Flash both halves
 
-Record results in `artifacts/hardware-trial.md`, including the firmware bundle
-and date. Keep the rollback image until all of these pass:
+Use MoErgo's [power-up bootloader procedure](https://docs.moergo.com/glove80-user-guide/customizing-key-layout/#entering-bootloader-mass-storage-device-mode-on-power-up):
 
-| Check | Pass condition |
-|---|---|
-| QWERTY | Every key on both halves produces its expected output; eight tap/holds behave acceptably during actual typing |
-| Gaming | All Gaming keys work; B+Right / F+C enters and exits repeatedly, with no stuck keys |
-| Wireless | Pair a Magic thumb slot; type on both halves with USB unplugged; reconnect after power cycling |
-| Sleep | After more than five idle minutes, LEDs go out and a key on **either** half wakes typing and the split link |
-| Persistence | Power-cycle both halves; bindings, scenes, selected effect and output policy survive |
-| Lighting | Eight Lower highlights remain visible over a changing effect; disappear when Lower ends; Magic indicators match state |
-| Battery | Compare a normal evening and overnight idle with lights off, then with your preferred lights; record both halves' starting/ending percentages and elapsed time |
+1. Switch the half off and connect it to the computer by USB.
+2. Hold physical positions **C6R6 + C3R3** and switch it on. On default keycaps,
+   these are **Magic + E** on the left and **I + PgDn** on the right.
+3. Check the mounted volume: `GLV80LHBOOT` is left; `GLV80RHBOOT` is right.
+4. Copy the matching UF2 from the build bundle to that volume. Wait for the copy
+   to finish and the volume to disappear.
+5. Repeat for the other half.
 
-The intended target is comfortable wireless use with charging available, not a
-month of battery life. If wake loses the first key, the right half disconnects,
-or Gaming becomes unreliable, stop the trial and restore ZMK. If only LED drain
-is excessive, try Magic+S (no animation), then Magic+T (lights off), before
-changing radio timing. Battery percentages are coarse; do not extrapolate a
-short test into a lifetime estimate.
+## Load the layout
+
+Turn on both halves and connect the left half by USB. Ensure the user has
+[USB configuration access](firmware.md#transport-selection), then run:
+
+```sh
+just control --usb version
+just diff --usb
+just apply --usb --replace-live
+```
+
+Review the differences before applying. The first apply needs `--replace-live`
+because this checkout has no saved synchronization baseline. It backs up the
+keyboard configuration before replacing it. `diff` returns a nonzero status for
+both differences and connection errors; resolve connection errors before applying.
+
+Flashing and applying are separate operations: a fresh installation can use the
+upstream default layout until the runtime configuration is applied. Removing a
+layer from a file does not erase an existing device layer; see
+[layer removal](firmware.md#layer-removal) if extra default layers remain.
+
+## Pair Bluetooth
+
+With the saved layout loaded, return to Base and select a Bluetooth slot using
+[Magic](controls.md#magic). Pair the keyboard in the host's Bluetooth settings,
+then disconnect USB and check typing from both halves. Switching firmware can
+require removing the old host pairing and pairing again. Clear only the selected
+slot's bond when repairing that slot; clearing all bonds affects every host.
+
+Once paired, `just diff` checks the Bluetooth configuration connection. Complete
+the [hardware checks](evaluation.md#hardware-checks) before relying on the setup.
 
 ## Recover
 
-Enter each half's hardware bootloader using the physical power-up method above,
-then restore your known-working ZMK image to the appropriate half (or both if
-it is a combined MoErgo image). Follow MoErgo's reset/re-pair instructions if
-Bluetooth bonds no longer match. Resetting RMK does not reinstall ZMK.
+To restore a saved layout while keeping RMK, inspect the chosen backup, then run:
 
-To recover a layout while staying on RMK, use
-`./keyboard save backups/CHOSEN.toml`, then `./keyboard apply --replace-live`.
-Both operations keep backups of what they replace.
+```sh
+just save backups/CHOSEN.toml
+just apply --replace-live
+```
+
+Use the actual backup filename and add `--usb` to `apply` when using USB.
+Both operations retain a backup of what they replace.
+
+To restore firmware, enter each half's hardware bootloader using the power-up
+procedure above and flash the known-working recovery image according to its
+instructions. Recovery images may use a different packaging scheme from this
+project's separate left/right UF2s. Restore host pairings as required by that
+firmware. A settings reset does not reinstall firmware.
