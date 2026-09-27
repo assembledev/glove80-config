@@ -16,6 +16,11 @@ Hold Lower or Magic to use that layer. Press **B + Right Arrow** together within
 50 ms to toggle Gaming. In Gaming, the same physical positions are **F + C**.
 Toggle back to Base before using Magic.
 
+## Right thumb keys
+
+On Base and Lower, the physical right Alt position sends **Backspace**, and the
+physical Backspace position sends **Right Alt**. Gaming is unchanged.
+
 ## Tap and hold
 
 On Base, F1–F5 have a 200 ms hold threshold:
