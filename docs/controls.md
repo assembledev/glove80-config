@@ -18,6 +18,11 @@ Gaming and toggle back to Base. Return to Base before using Magic.
 A quick tap of Magic shows MoErgo's battery, connection and layer indicators.
 Holding it enters Magic using MoErgo's usual 200 ms tap-preferred behavior.
 
+## Right thumb keys
+
+On Base and Lower, the physical right Alt position sends **Backspace**, and the
+physical Backspace position sends **Right Alt**. Gaming is unchanged.
+
 ## Tap and hold
 
 | Base key | Tap | Hold |
