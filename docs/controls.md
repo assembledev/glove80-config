@@ -35,6 +35,14 @@ The remaining Base tap/holds use the same threshold:
 | 1 | 1 | Shift+1 |
 | 7 | 7 | Shift+Slash |
 
+## Close window
+
+On Base (also inherited by Lower), double-tap the physical **=** key to send
+**Alt+F4** and close the active window. Each tap must be shorter than 250 ms,
+and the second press must start within 250 ms of the first release.
+A single tap types `=` after the double-tap window expires; holding types `=`.
+To type `==`, pause longer than 250 ms between taps. Gaming is unchanged.
+
 ## Magic
 
 | Shortcut | Action |
