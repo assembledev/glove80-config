@@ -31,6 +31,13 @@ These use ZMK's usual 200 ms hold threshold; function holds and the remaining
 hold/taps use the default hold-preferred flavor. Workspace holds execute a
 complete press/tap/release macro, so keeping the key held does not repeat the
 shortcut or keep Super pressed. The host must bind Super+F1–F5 to workspaces.
+## Close window
+
+On Base (also inherited by Lower), double-tap the physical **=** key to send
+**Alt+F4** and close the active window. Each tap must be shorter than 250 ms,
+and the second press must start within 250 ms of the first release.
+A single tap types `=` after the double-tap window expires; holding types `=`.
+To type `==`, pause longer than 250 ms between taps. Gaming is unchanged.
 
 ## Magic
 
