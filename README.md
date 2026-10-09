@@ -4,6 +4,10 @@ Personal Base, Lower, Magic and Gaming layers for MoErgo's supported ZMK firmwar
 The layout is in `config/glove80.keymap`; the firmware source and its development
 tools are pinned through Nix.
 
+`config/glove80.keymap` is the source of truth. The workflow runs locally and does
+not require a web editor or account. `config/glove80.conf` has no Kconfig overrides;
+power, radio, sleep and RGB limits use MoErgo's defaults.
+
 ## Build from a clone
 
 Requires Linux and Nix with flakes enabled. Git submodules are not needed for the
@@ -19,7 +23,8 @@ cd glove80-config
 `check` preprocesses the keymap with the pinned ZMK headers and checks its device
 tree, physical binding counts, behavior arguments and combo references. It does
 not compile firmware. `build-firmware` builds both halves and produces
-`result/glove80.uf2`, MoErgo's combined image. Flashing is manual: follow
+`result/glove80.uf2`, MoErgo's combined image. Run `./keyboard drop-firmware`
+before entering bootloader mode to copy it automatically to each half. Follow
 [installation and recovery](docs/first-install.md).
 
 ## Edit the layout
@@ -27,6 +32,9 @@ not compile firmware. `build-firmware` builds both halves and produces
 Edit `config/glove80.keymap`, run `./keyboard check`, then rebuild and flash the
 combined image. Use `nix develop` or `direnv allow` for a development shell;
 `just check` and `just build-firmware` invoke the same commands.
+
+Keep edits scoped to the requested keys and behaviors. Changes to timing or
+firmware defaults should be explicit.
 
 - [Controls](docs/controls.md): layers, shortcuts, Bluetooth and RGB.
 - [Firmware maintenance](docs/firmware.md): ownership, builds and source updates.

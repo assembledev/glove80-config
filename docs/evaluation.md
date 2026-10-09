@@ -9,6 +9,9 @@ using the pinned official ZMK headers, compile its device tree, and check:
 - Referenced behaviors exist and have the required number of arguments.
 - Hold/tap targets, layer references and combo positions are valid.
 - The command scripts and `just` recipes have valid syntax.
+- Autodropper tests cover UF2 validation, target identification, recovery copies,
+  interrupted transfers and bootloader-disappearance confirmation using fake
+  volumes; they do not flash hardware.
 
 This does not compile firmware or validate the complete board device tree and
 Kconfig. A successful firmware build additionally verifies the Zephyr build and

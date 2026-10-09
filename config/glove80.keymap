@@ -23,6 +23,12 @@
 
 / {
     behaviors {
+        equals_close: equals_close {
+            compatible = "zmk,behavior-tap-dance";
+            #binding-cells = <0>;
+            tapping-term-ms = <250>;
+            bindings = <&kp EQUAL>, <&kp LA(F4)>;
+        };
         // MoErgo's Magic: tap for indicators, hold for the control layer.
         magic: magic_hold_tap {
             compatible = "zmk,behavior-hold-tap";
@@ -93,11 +99,11 @@
             label = "Base";
             bindings = <
                 &workspace_hold F1 F1  &workspace_hold F2 F2  &workspace_hold F3 F3  &workspace_hold F4 F4  &workspace_hold F5 F5  &kp F6  &kp F7  &kp F8  &kp F9  &mt LG(PSCRN) PSCRN
-                &kp EQUAL  &mt LS(N1) N1  &kp N2  &kp N3  &kp N4  &kp N5  &kp N6  &mt LS(FSLH) N7  &kp N8  &kp N9  &kp N0  &kp MINUS
+                &equals_close  &mt LS(N1) N1  &kp N2  &kp N3  &kp N4  &kp N5  &kp N6  &mt LS(FSLH) N7  &kp N8  &kp N9  &kp N0  &kp MINUS
                 &kp TAB  &kp Q  &kp W  &kp E  &kp R  &kp T  &kp Y  &kp U  &kp I  &kp O  &kp P  &kp BSLH
                 &kp ESC  &kp A  &kp S  &kp D  &kp F  &kp G  &kp H  &kp J  &kp K  &kp L  &kp SEMI  &kp SQT
                 &kp GRAVE  &kp Z  &kp X  &kp C  &kp V  &kp B  &kp LSHFT  &kp LALT  &mo 1  &kp DEL  &kp RCTRL  &kp RSHFT  &kp N  &kp M  &kp COMMA  &kp DOT  &kp FSLH  &kp PG_UP
-                &magic MAGIC 0  &kp HOME  &kp END  &kp LEFT  &kp RIGHT  &kp SPACE  &kp LCTRL  &kp LGUI  &kp RALT  &kp BSPC  &kp RET  &kp UP  &kp DOWN  &kp LBKT  &kp RBKT  &kp PG_DN
+                &magic MAGIC 0  &kp HOME  &kp END  &kp LEFT  &kp RIGHT  &kp SPACE  &kp LCTRL  &kp LGUI  &kp BSPC  &kp RALT  &kp RET  &kp UP  &kp DOWN  &kp LBKT  &kp RBKT  &kp PG_DN
             >;
         };
         lower_layer {

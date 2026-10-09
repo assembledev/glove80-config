@@ -5,17 +5,19 @@ command=${1:-help}
 case "$command" in
   help|-h|--help)
     cat <<'HELP'
-Usage: ./keyboard COMMAND
+Usage: ./keyboard COMMAND [ARGS]
   check             Check the ZMK keymap; does not build firmware
   build-firmware    Build result/glove80.uf2 for both halves
+  drop-firmware [UF2] [--dry-run]
+                    Wait for bootloader volumes and copy firmware to both halves
 
-Firmware flashing is manual. See docs/first-install.md.
+See docs/first-install.md for bootloader entry and recovery.
 HELP
     exit 0 ;;
-  check|build-firmware) ;;
+  check|build-firmware|drop-firmware) ;;
   *) printf 'Unknown command: %s\n' "$command" >&2; exit 2 ;;
 esac
-if [[ $# -gt 1 ]]; then printf 'This command takes no arguments.\n' >&2; exit 2; fi
+if [[ $command != drop-firmware && $# -gt 1 ]]; then printf 'This command takes no arguments.\n' >&2; exit 2; fi
 case "$command" in
   check)
     if [[ ${GLOVE80_ZMK_SHELL:-} != 1 ]]; then
@@ -23,11 +25,19 @@ case "$command" in
     fi
     bash -n "$root/keyboard" "$root/scripts/zmk-keyboard"
     just --justfile "$root/justfile" --list >/dev/null
+    python3 -m unittest discover -s "$root/tests" -p 'test_*.py'
     exec python3 "$root/scripts/check-zmk.py" --zmk "$GLOVE80_ZMK_SOURCE" --config "$root/config"
     ;;
   build-firmware)
     "$root/keyboard" check
     nix build --quiet "path:$root#firmware" --out-link "$root/result"
     printf 'Combined firmware: %s/result/glove80.uf2\n' "$root"
+    ;;
+  drop-firmware)
+    shift
+    if [[ ${GLOVE80_ZMK_SHELL:-} != 1 ]]; then
+      exec nix develop --quiet "path:$root" --command bash "$root/scripts/zmk-keyboard" drop-firmware "$@"
+    fi
+    exec python3 "$root/scripts/drop-firmware.py" "$@"
     ;;
 esac

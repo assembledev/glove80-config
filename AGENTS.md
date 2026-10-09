@@ -12,16 +12,20 @@ Personal Glove80 layout on MoErgo's supported ZMK firmware.
 - `config/default.nix`, `flake.nix`, `flake.lock`: official firmware source,
   native Nix builds and combined UF2 packaging.
 - `scripts/zmk-keyboard`, `scripts/check-zmk.py`: active commands and source checks.
-- Existing RMK TOML files, scripts, tests and `dependencies/`: frozen reference
-  and recovery material; not part of the active ZMK build. Preserve unrelated
-  edits in these files and keep upstream sources unmodified.
-- `.cache/`: disposable local tooling. `backups/` and `artifacts/`: private
-  recovery data and physical qualification evidence; retain Git exclusions.
+- `scripts/drop-firmware.py`, `tests/test_drop_firmware.py`: host-side firmware
+  transfer and its checks; no custom code is added to the keyboard firmware.
+- `backups/` and `artifacts/`: private recovery data and physical qualification
+  evidence; retain Git exclusions.
 
 ## Changes and verification
 
 Keep keys outside the requested change intact. Check physical position order,
 layer indices and combo references when editing the layout.
+
+The native keymap is the source of truth. Use built-in ZMK behaviors and MoErgo's
+builder. Keep edits scoped to the request; explicitly discuss changes to timing,
+behavior defaults or Kconfig before making them. Do not introduce JSON converters,
+alternate editors, custom firmware patches or live-configuration tooling.
 
 Run `./keyboard check` for source changes and `nix flake check` for Nix or command
 changes. These do not compile firmware. Build with `./keyboard build-firmware`
