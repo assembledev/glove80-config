@@ -1,64 +1,40 @@
 # AGENTS.md
 
-## Project
+## Project and ownership
 
-Personal Glove80 configuration, firmware builds, and configuration tools using
-MoErgo RMK and Rynkbench. Maintain reliable typing, wireless operation, and visual
-layout editing through the supported upstream interfaces.
+Personal Glove80 layout on MoErgo's supported ZMK firmware.
 
-## Ownership
+- `config/glove80.keymap`: keys, layers, behaviors, macros and combos in MoErgo's
+  physical 80-key order.
+- `config/glove80.conf`: optional Kconfig overrides. Keep board, power, radio,
+  flash and electrical settings at MoErgo defaults unless a diagnosed need
+  justifies an explicit change.
+- `config/default.nix`, `flake.nix`, `flake.lock`: official firmware source,
+  native Nix builds and combined UF2 packaging.
+- `scripts/zmk-keyboard`, `scripts/check-zmk.py`: active commands and source checks.
+- Existing RMK TOML files, scripts, tests and `dependencies/`: frozen reference
+  and recovery material; not part of the active ZMK build. Preserve unrelated
+  edits in these files and keep upstream sources unmodified.
+- `.cache/`: disposable local tooling. `backups/` and `artifacts/`: private
+  recovery data and physical qualification evidence; retain Git exclusions.
 
-- `config/runtime.toml`: bindings, layers, behaviors, and lighting; applied at runtime.
-- `config/firmware.toml`: board and power settings compiled into both halves.
-- `scripts/`: project commands, configuration transactions, and build orchestration.
-- `tests/`: project regressions and the personal-layout editor round trip.
-- `dependencies/`: pinned upstream Git submodules. Keep their sources unmodified;
-  use configuration and public interfaces rather than downstream patches.
-- `.cache/`: disposable build output. `backups/` and `artifacts/`: private local
-  recovery data and build/qualification evidence; retain their Git exclusions.
+## Changes and verification
 
-## Changes
+Keep keys outside the requested change intact. Check physical position order,
+layer indices and combo references when editing the layout.
 
-- Keep bindings and controls outside the requested change intact. Layer reordering
-  also requires checking layer references, combos, and lighting conditions.
-- Preserve board wiring, flash partitions, and electrical limits when changing
-  firmware settings.
-- Preserve transaction guarantees: validate before replacement, retain the previous
-  configuration, stop writes on failed device checks, and verify device readback.
-- Update dependency pins as a compatible firmware/editor set using the procedure
-  in [maintenance](docs/firmware.md). Keep nested firmware dependencies at the
-  revisions selected by their parent.
-- Do not commit, add remotes, or publish private files unless requested.
+Run `./keyboard check` for source changes and `nix flake check` for Nix or command
+changes. These do not compile firmware. Build with `./keyboard build-firmware`
+only when firmware compilation is authorized. Compilation does not establish
+physical behavior; follow [validation](docs/evaluation.md).
 
-## Verification
+Do not commit, add remotes, publish, apply configuration or flash hardware unless
+requested. Before flashing, verify the target volume, firmware packaging and
+available recovery image using [installation](docs/first-install.md).
 
-Run commands from the repository root. Linux, Git, and Nix with flakes are
-required. Use direnv or `nix develop`, then `just` recipes; `./keyboard`
-also enters the pinned flake environment when invoked outside the shell. Use `./keyboard init`
-when submodules are missing and `./keyboard help` for the command interface.
+## Documentation
 
-| Change | Required verification |
-|---|---|
-| Flake or task recipes | `nix flake check`, `nix develop --command just check` |
-| Runtime configuration | `./keyboard validate` |
-| Project scripts or tests | `./keyboard check` |
-| Editor build, codec compatibility, or editor round-trip tests | `./keyboard build-editor` |
-| Compiled settings or firmware dependency | `./keyboard check` and `./keyboard build-firmware` |
-| Documentation only | Check referenced paths, commands, and `git diff --check` |
-
-For dependency updates, combine the applicable checks. Add regression coverage
-for changed behavior, especially configuration loss and failed device operations.
-Report which checks ran and any remaining unverified behavior. Compilation and
-host tests do not establish physical keyboard behavior; hardware qualification
-follows [first install](docs/first-install.md).
-
-## Device operations and documentation
-
-- Apply configuration or flash firmware only when the task authorizes that device
-  operation. Before flashing, verify the target half, matching image, and available
-  recovery firmware using [first install](docs/first-install.md).
-- Update the document that owns a changed interface: [README](README.md) for the
-  editing workflow, [controls](docs/controls.md) for key behavior, and
-  [maintenance](docs/firmware.md) for builds and dependency updates.
-- Keep qualification findings in [evaluation](docs/evaluation.md), with supporting
-  local evidence in `artifacts/`. Distinguish observed failures from untested behavior.
+README owns the editing workflow; controls owns key behavior; firmware owns
+source/build maintenance; first-install owns flashing/pairing/recovery; evaluation
+owns verification boundaries. Document durable interfaces and operations, not
+patch chronology or transient test results. Never include private data or secrets.

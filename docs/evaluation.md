@@ -1,61 +1,36 @@
-# Validation and limitations
+# Validation
 
-Automated checks verify configuration encoding, file operations and build
-outputs. Hardware checks verify the behavior of the installed firmware. Passing
-one does not establish the other.
+## Source checks
 
-## Automated checks
+`./keyboard check` and the flake's `keymap` check preprocess the saved layout
+using the pinned official ZMK headers, compile its device tree, and check:
 
-Run these from the project environment:
+- Every layer has 80 bindings in the official board's physical position order.
+- Referenced behaviors exist and have the required number of arguments.
+- Hold/tap targets, layer references and combo positions are valid.
+- The command scripts and `just` recipes have valid syntax.
 
-| Command | Coverage |
+This does not compile firmware or validate the complete board device tree and
+Kconfig. A successful firmware build additionally verifies the Zephyr build and
+produces the combined UF2. Neither establishes physical keyboard reliability.
+
+## Physical checks
+
+After installing a build, verify:
+
+| Area | Procedure |
 |---|---|
-| `nix flake check` | Transaction and build-failure regressions, shell/recipe syntax, Nix formatting |
-| `just check` | Runtime validation, project regressions, dependency pins, and checksums/partition bounds of locally available firmware bundles |
-| `just build-editor` | Pinned WASM codecs, TypeScript, editor tests, layout round trips, workspace macro encoding, and the production editor build |
-| `just build-firmware` | Both firmware images, bundle manifest and checksums |
+| Keys | Exercise every physical key on all four layers, including thumb keys |
+| Holds | Tap F1–F5; hold each and keep holding; check one workspace switch and no held Super |
+| Gaming | Enter with Base B + Right Arrow and leave with Gaming F + C |
+| USB | Select USB output and exercise overlapping presses/releases on both halves |
+| Bluetooth | Repeat typing on each intended host; look for missing releases and unintended repeat |
+| Wake | Test the first key after idle, host suspend and keyboard power cycles, from each half |
+| RGB | Verify toggle, brightness, effects and Magic's status indicators on both halves |
+| Persistence | Power-cycle both halves and verify layout, output selection and lighting state |
+| Endurance | Charge each half fully and record normal-use intervals with RGB off |
 
-`just check` can pass without a local firmware bundle; it reports that images
-need building. It does not connect to the keyboard. An apply verifies the
-configuration read back from the device, not the resulting physical key events.
-
-The optional `python3 scripts/evaluate.py --migration` compares against a private
-original layout in `backups/original/source-layout.json`. It is an import audit,
-not a check of the current customized layout or a fresh-clone prerequisite.
-
-## Hardware checks
-
-Repeat these after firmware changes. Record the source revisions, build bundle,
-connection type, procedure and observed result in an ignored file under
-`artifacts/`. Record failed and untested cases explicitly.
-
-| Area | Check |
-|---|---|
-| Typing | Exercise every key on both halves, including quick taps, long holds and overlapping keys |
-| Workspace shortcuts | Tap F1–F5 normally; hold each past the threshold and keep holding to check that the shortcut fires only once and Super is released |
-| Gaming | Enter and leave Gaming repeatedly; check the gaming bindings and toggle positions |
-| Wireless | Type from both halves with USB disconnected; reconnect after host and keyboard power cycles |
-| Sleep | Wait beyond the configured idle timeout; test wake from each half and check the first keystroke and split connection |
-| Persistence | Power-cycle both halves and compare bindings, layer metadata, scenes, effects and output policy |
-| Lighting | Check Lower highlights, master brightness, Magic battery bars and Bluetooth indicators on the physical keys |
-| Battery | Measure both halves over normal use and idle periods, recording duration and lighting settings |
-
-Battery percentages are coarse estimates. Use measured intervals to compare
-settings; do not infer battery lifetime from a short sample. Keep a tested
-recovery image available; see [recovery](first-install.md#recover).
-
-## Known limits
-
-USB and Bluetooth configuration apply/readback and split lighting synchronization
-have been exercised on the development keyboard. Full key coverage, sustained
-reconnect reliability, sleep/wake behavior, typing latency and battery endurance
-are not comprehensively qualified. The workspace macros have encoding and device
-readback checks; those checks alone do not confirm physical shortcut behavior.
-
-Master brightness resets on boot; its behavior is documented with the
-[lighting controls](controls.md#lighting). Browser device access depends on the
-available transport APIs; see [live editing](firmware.md#live-editing).
-
-Pinned dependencies make builds reproducible from specified sources. Updates
-still require the automated and hardware checks above; follow the
-[dependency update procedure](firmware.md#dependency-updates).
+Keep private observations, source revisions and firmware copies under ignored
+`artifacts/`. Distinguish actual shutdown from displayed battery percentage.
+Battery estimates alone do not measure endurance. A comparison is meaningful
+only with the same hosts, lighting policy and comparable starting charge.

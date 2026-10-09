@@ -1,60 +1,38 @@
 # Glove80 configuration
 
-Personal Glove80 layout with QWERTY, Lower, Magic and Gaming layers, per-key
-lighting, and Bluetooth configuration. Built on
-[MoErgo RMK](https://github.com/colonelpanic8/moergo-rmk) and the
-[Rynkbench](https://github.com/colonelpanic8/rynkbench) visual editor.
+Personal Base, Lower, Magic and Gaming layers for MoErgo's supported ZMK firmware.
+The layout is in `config/glove80.keymap`; the firmware source and its development
+tools are pinned through Nix.
 
-## Setup
+## Build from a clone
 
-Requires Linux, Git, and Nix with flakes enabled. From the repository root:
-
-```sh
-git submodule update --init --recursive
-nix develop
-```
-
-For automatic environment loading, use `direnv allow` instead of `nix develop`.
-Run `just` to list available commands. The first editor build needs network
-access and several GB of free space.
-
-Before applying a layout to a new keyboard, follow
-[firmware installation and recovery](docs/first-install.md).
-
-## Edit and apply
+Requires Linux and Nix with flakes enabled. Git submodules are not needed for the
+ZMK workflow. On the computer that will flash the keyboard:
 
 ```sh
-just edit
+git clone https://github.com/assembledev/glove80-config.git
+cd glove80-config
+./keyboard check
+./keyboard build-firmware
 ```
 
-In Rynkbench, choose **Open file**, select `config/runtime.toml`, and edit the
-layout. Choose **Download TOML** when finished, then import the downloaded file
-and apply it to the keyboard:
+`check` preprocesses the keymap with the pinned ZMK headers and checks its device
+tree, physical binding counts, behavior arguments and combo references. It does
+not compile firmware. `build-firmware` builds both halves and produces
+`result/glove80.uf2`, MoErgo's combined image. Flashing is manual: follow
+[installation and recovery](docs/first-install.md).
 
-```sh
-just save ~/Downloads/NAME-rynkbench.toml
-just apply
-```
+## Edit the layout
 
-Replace `NAME-rynkbench.toml` with the downloaded filename. `save` updates the
-project and keeps a backup; `apply` writes to the keyboard and verifies readback.
-Device commands use Bluetooth by default and require a paired keyboard. Use
-`just apply --usb` for USB; see [connection requirements](docs/firmware.md#transport-selection).
+Edit `config/glove80.keymap`, run `./keyboard check`, then rebuild and flash the
+combined image. Use `nix develop` or `direnv allow` for a development shell;
+`just check` and `just build-firmware` invoke the same commands.
 
-If you changed settings directly on the keyboard, run `just pull` before editing
-to save them into the project. `just diff` compares the project with the keyboard.
-Applying stops if there are unsynced device changes.
-
-For direct editing through a browser device connection, see
-[live editing and browser support](docs/firmware.md#live-editing).
-
-## Documentation
-
-- [Controls](docs/controls.md): layer shortcuts, workspace switching and RGB.
-- [Installation and recovery](docs/first-install.md): flashing and restoring firmware.
-- [Maintenance](docs/firmware.md): builds, dependencies, connections and backups.
-- [Evaluation](docs/evaluation.md): validation results and hardware limitations.
+- [Controls](docs/controls.md): layers, shortcuts, Bluetooth and RGB.
+- [Firmware maintenance](docs/firmware.md): ownership, builds and source updates.
+- [Installation and recovery](docs/first-install.md): flashing and pairing.
+- [Validation](docs/evaluation.md): source checks and physical acceptance checks.
 
 ## License
 
-[GNU GPLv3](LICENSE). Dependencies retain their own licenses.
+[GNU GPLv3](LICENSE). Upstream firmware retains its own license.
