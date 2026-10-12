@@ -103,7 +103,7 @@
                 &kp TAB  &kp Q  &kp W  &kp E  &kp R  &kp T  &kp Y  &kp U  &kp I  &kp O  &kp P  &kp BSLH
                 &kp ESC  &kp A  &kp S  &kp D  &kp F  &kp G  &kp H  &kp J  &kp K  &kp L  &kp SEMI  &kp SQT
                 &kp GRAVE  &kp Z  &kp X  &kp C  &kp V  &kp B  &kp LSHFT  &kp LALT  &mo 1  &kp DEL  &kp RCTRL  &kp RSHFT  &kp N  &kp M  &kp COMMA  &kp DOT  &kp FSLH  &kp PG_UP
-                &magic MAGIC 0  &kp HOME  &kp END  &kp LEFT  &kp RIGHT  &kp SPACE  &kp LCTRL  &kp LGUI  &kp BSPC  &kp RALT  &kp RET  &kp UP  &kp DOWN  &kp LBKT  &kp RBKT  &kp PG_DN
+                &magic MAGIC 0  &kp HOME  &kp END  &kp LEFT  &kp RIGHT  &kp SPACE  &kp LCTRL  &kp LGUI  &kp BSPC  &kp RALT  &kp RET  &kp DOWN  &kp UP  &kp LBKT  &kp RBKT  &kp PG_DN
             >;
         };
         lower_layer {
