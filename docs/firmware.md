@@ -34,7 +34,12 @@ both board-specific families and is copied to both halves. Checking and building
 do not flash hardware. `drop-firmware` explicitly transfers an existing image;
 see [installation](first-install.md). These commands do not change pairing.
 
-Use `nix develop` for `just` and the source-check tools. See
+`nix develop` supplies the command tools, MoErgo's firmware build dependencies,
+and the pinned Zephyr modules and source. Entering the shell fetches or builds
+those dependencies without compiling firmware. Dependencies are shared with
+the firmware builder rather than maintained as a separate toolchain list.
+Changing the firmware pin or garbage-collecting dependencies can require new
+downloads. See
 [validation](evaluation.md) for the boundaries of these checks and
 [installation](first-install.md) for the physical procedure.
 

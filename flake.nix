@@ -41,14 +41,18 @@
         system:
         let
           pkgs = pkgsFor system;
+          firmware = import zmk { inherit pkgs; };
         in
         {
           default = pkgs.mkShell {
+            inputsFrom = [ firmware.zmk ];
+            # These are source dependencies, not buildInputs in MoErgo's builder.
+            src = firmware.zmk.src;
+            buildInputs = firmware.zmk.zephyrModuleDeps;
             packages = [
               pkgs.just
-              pkgs.python3
+              pkgs.nix
               pkgs.gcc
-              pkgs.dtc
               pkgs.util-linux
             ];
             shellHook = ''
